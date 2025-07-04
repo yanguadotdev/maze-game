@@ -1,21 +1,21 @@
-import { useState, useEffect } from 'react';
-import Maze from './components/Maze';
-import type { Cell } from './types';
-import GameStatus from './components/GameStatus';
-import PlayerPaths from './components/PlayerPaths';
-import AIStatus from './components/AIStatus';
-import Instructions from './components/Instructions';
-import { useMazeGenerator } from './hooks/useMazeGenerator';
-import { useAIPathfinder } from './hooks/useAIPathfinder';
-import { usePlayerMovement } from './hooks/usePlayerMovement';
-import { usePlayerPaths } from './hooks/usePlayerPaths';
-import { useGameState } from './hooks/useGameState';
-import Controls from './components/Controls';
+import { useState, useEffect } from 'react'
+import Maze from './components/Maze'
+import type { Cell } from './types'
+import GameStatus from './components/GameStatus'
+import PlayerPaths from './components/PlayerPaths'
+import AIStatus from './components/AIStatus'
+import Instructions from './components/Instructions'
+import { useMazeGenerator } from './hooks/useMazeGenerator'
+import { useAIPathfinder } from './hooks/useAIPathfinder'
+import { usePlayerMovement } from './hooks/usePlayerMovement'
+import { usePlayerPaths } from './hooks/usePlayerPaths'
+import { useGameState } from './hooks/useGameState'
+import Controls from './components/Controls'
 
 
 const MazeSimulator = () => {
-  const [maze, setMaze] = useState<Cell[][]>([]);
-  const [size] = useState(20);
+  const [maze, setMaze] = useState<Cell[][]>([])
+  const [size] = useState(20)
 
   const {
     gameMode,
@@ -27,22 +27,23 @@ const MazeSimulator = () => {
     playerPosition,
     setPlayerPosition,
     resetGameState,
-  } = useGameState();
+  } = useGameState()
 
-  const { generateMaze } = useMazeGenerator(size);
+  const { generateMaze } = useMazeGenerator(size)
   const {
     runAI,
     isAIRunning,
     aiPosition,
     aiStack,
     resetAI,
+    cancelAI
   } = useAIPathfinder({
     maze,
     size,
     aiSpeed,
     onFinish: () => setGameWon(true),
     updateMaze: setMaze
-  });
+  })
 
   const {
     playerPaths,
@@ -58,7 +59,7 @@ const MazeSimulator = () => {
     setGameWon,
     maze,
     setMaze
-  });
+  })
 
 
   usePlayerMovement({
@@ -72,12 +73,13 @@ const MazeSimulator = () => {
     maze,
     size,
     onWin: () => setGameWon(true)
-  });
+  })
 
   const handleResetGame = () => {
-    resetGameState();
-    resetPaths();
-    resetAI();
+    resetGameState()
+    resetPaths()
+    resetAI()
+    cancelAI()
 
     const newMaze = maze.map(row => row.map(cell => ({
       ...cell,
@@ -86,19 +88,20 @@ const MazeSimulator = () => {
       isBacktrack: false,
       isPlayerPath: false,
       pathNumber: undefined
-    })));
-    setMaze(newMaze);
-  };
+    })))
+    setMaze(newMaze)
+  }
 
   const handleGenerateNewMaze = () => {
-    const newMaze = generateMaze();
-    setMaze(newMaze);
-  };
+    handleResetGame()
+    const newMaze = generateMaze()
+    setMaze(newMaze)
+  }
 
   useEffect(() => {
-    const newMaze = generateMaze();
-    setMaze(newMaze);
-  }, [generateMaze]);
+    const newMaze = generateMaze()
+    setMaze(newMaze)
+  }, [generateMaze])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -164,7 +167,7 @@ const MazeSimulator = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MazeSimulator;
+export default MazeSimulator
