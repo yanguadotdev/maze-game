@@ -1,8 +1,8 @@
 import { useEffect, useCallback } from 'react';
-import type { Position } from '../types';
+import type { Cell, Position } from '../types';
+import { canMove } from '../utils/mazeUtils';
 
 interface UsePlayerMovementOptions {
-    canMove: (from: Position, to: Position) => boolean;
     isAIRunning: boolean;
     gameMode: string;
     gameWon: boolean;
@@ -10,12 +10,12 @@ interface UsePlayerMovementOptions {
     setPlayerPosition: (pos: Position) => void;
     currentPlayerPath: Position[];
     setCurrentPlayerPath: (path: Position[]) => void;
+    maze: Cell[][];
     size: number;
     onWin: () => void;
 }
 
 export function usePlayerMovement({
-    canMove,
     isAIRunning,
     gameMode,
     gameWon,
@@ -23,6 +23,7 @@ export function usePlayerMovement({
     setPlayerPosition,
     currentPlayerPath,
     setCurrentPlayerPath,
+    maze,
     size,
     onWin
 }: UsePlayerMovementOptions) {
@@ -51,7 +52,7 @@ export function usePlayerMovement({
                 break;
         }
 
-        if (newPos && canMove(playerPosition, newPos)) {
+        if (newPos && canMove(playerPosition, newPos, maze, size)) {
             setPlayerPosition(newPos);
             setCurrentPlayerPath([...currentPlayerPath, newPos]);
 
@@ -64,7 +65,6 @@ export function usePlayerMovement({
         gameWon,
         isAIRunning,
         playerPosition,
-        canMove,
         currentPlayerPath,
         setPlayerPosition,
         setCurrentPlayerPath,

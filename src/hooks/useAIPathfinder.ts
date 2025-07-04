@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import type { Cell, Position } from '../types';
+import { canMove } from '../utils/mazeUtils';
 
 interface UseAIPathfinderOptions {
   maze: Cell[][];
   size: number;
   aiSpeed: number;
-  canMove: (from: Position, to: Position) => boolean;
   onFinish?: () => void;
   updateMaze: (updatedMaze: Cell[][]) => void;
 }
@@ -14,7 +14,6 @@ export function useAIPathfinder({
   maze,
   size,
   aiSpeed,
-  canMove,
   onFinish,
   updateMaze,
 }: UseAIPathfinderOptions) {
@@ -23,7 +22,6 @@ export function useAIPathfinder({
   const [aiStack, setAiStack] = useState<Position[]>([]);
 
   const getValidNeighbors = (pos: Position, visited: Set<string>): Position[] => {
-    const neighbors: Position[] = [];
     const { x, y } = pos;
     const posKey = (p: Position) => `${p.x},${p.y}`;
 
@@ -35,7 +33,7 @@ export function useAIPathfinder({
     ];
 
     return directions.filter(next =>
-      !visited.has(posKey(next)) && canMove(pos, next)
+      !visited.has(posKey(next)) && canMove(pos, next, maze, size)
     );
   };
 

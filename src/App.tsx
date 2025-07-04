@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Play, RotateCcw, Users, Zap, Settings } from 'lucide-react';
 import Maze from './components/Maze';
 import type { Cell, GameMode, Position } from './types';
@@ -22,20 +22,6 @@ const MazeSimulator = () => {
   const [selectedPath, setSelectedPath] = useState<number | null>(null);
   const [aiSpeed, setAiSpeed] = useState(100);
 
-  const canMove = (from: Position, to: Position): boolean => {
-    if (to.x < 0 || to.x >= size || to.y < 0 || to.y >= size) return false;
-
-    const dx = to.x - from.x;
-    const dy = to.y - from.y;
-
-    if (dx === 1) return !maze[from.y][from.x].walls.right;
-    if (dx === -1) return !maze[from.y][from.x].walls.left;
-    if (dy === 1) return !maze[from.y][from.x].walls.bottom;
-    if (dy === -1) return !maze[from.y][from.x].walls.top;
-
-    return false;
-  };
-
   const { generateMaze } = useMazeGenerator(size);
   const {
     runAI,
@@ -49,13 +35,11 @@ const MazeSimulator = () => {
     maze,
     size,
     aiSpeed,
-    canMove,
     onFinish: () => setGameWon(true),
     updateMaze: setMaze
   });
 
   usePlayerMovement({
-    canMove,
     isAIRunning,
     gameMode,
     gameWon,
@@ -63,6 +47,7 @@ const MazeSimulator = () => {
     setPlayerPosition,
     currentPlayerPath,
     setCurrentPlayerPath,
+    maze,
     size,
     onWin: () => setGameWon(true)
   });
