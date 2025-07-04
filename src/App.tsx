@@ -7,6 +7,7 @@ import PlayerPaths from './components/PlayerPaths';
 import AIStatus from './components/AIStatus';
 import Instructions from './components/Instructions';
 import { useMazeGenerator } from './hooks/useMazeGenerator';
+import { useAIPathfinder } from './hooks/useAIPathfinder';
 
 
 const MazeSimulator = () => {
@@ -14,16 +15,14 @@ const MazeSimulator = () => {
   const [size] = useState(20);
   const [gameMode, setGameMode] = useState<GameMode>('player');
   const [playerPosition, setPlayerPosition] = useState<Position>({ x: 0, y: 0 });
-  const [aiPosition, setAiPosition] = useState<Position>({ x: 0, y: 0 });
-  const [isAIRunning, setIsAIRunning] = useState(false);
-  const [aiStack, setAiStack] = useState<Position[]>([]);
+  // const [aiPosition, setAiPosition] = useState<Position>({ x: 0, y: 0 });
+  // const [isAIRunning, setIsAIRunning] = useState(false);
+  // const [aiStack, setAiStack] = useState<Position[]>([]);
   const [gameWon, setGameWon] = useState(false);
   const [playerPaths, setPlayerPaths] = useState<Position[][]>([]);
   const [currentPlayerPath, setCurrentPlayerPath] = useState<Position[]>([]);
   const [selectedPath, setSelectedPath] = useState<number | null>(null);
   const [aiSpeed, setAiSpeed] = useState(100);
-
-  const { generateMaze } = useMazeGenerator(size);
 
   const canMove = (from: Position, to: Position): boolean => {
     if (to.x < 0 || to.x >= size || to.y < 0 || to.y >= size) return false;
@@ -38,6 +37,24 @@ const MazeSimulator = () => {
 
     return false;
   };
+
+  const { generateMaze } = useMazeGenerator(size);
+  const {
+    runAI,
+    isAIRunning,
+    aiPosition,
+    aiStack,
+    setAiPosition,
+    setAiStack,
+    setIsAIRunning
+  } = useAIPathfinder({
+    maze,
+    size,
+    aiSpeed,
+    canMove,
+    onFinish: () => setGameWon(true),
+    updateMaze: setMaze
+  });
 
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
     if (gameMode !== 'player' || gameWon || isAIRunning) return;
@@ -116,99 +133,6 @@ const MazeSimulator = () => {
       }
     };
     animateSelection();
-  };
-
-  const runAI = async () => {
-    if (isAIRunning) return;
-
-    setIsAIRunning(true);
-    setGameMode('ai');
-    setAiPosition({ x: 0, y: 0 });
-
-    // Limpiar estados anteriores
-    const newMaze = maze.map(row => row.map(cell => ({
-      ...cell,
-      visited: false,
-      isPath: false,
-      isBacktrack: false
-    })));
-
-    setMaze(newMaze);
-
-    const stack: Position[] = [];
-    let current: Position = { x: 0, y: 0 };
-    const visited = new Set<string>();
-
-    const posKey = (pos: Position) => `${pos.x},${pos.y}`;
-
-    visited.add(posKey(current));
-    stack.push(current);
-
-    while (stack.length > 0) {
-      const neighbors = getValidNeighbors(current, visited);
-
-      if (neighbors.length > 0) {
-        const next = neighbors[0]; // Tomar el primer vecino válido
-        stack.push(next);
-        visited.add(posKey(next));
-        current = next;
-
-        // Actualizar visualización
-        setAiPosition(current);
-        setAiStack([...stack]);
-
-        const updatedMaze = newMaze.map(row => row.map(cell => ({
-          ...cell,
-          isPath: stack.some(pos => pos.x === cell.x && pos.y === cell.y),
-          isBacktrack: false
-        })));
-        setMaze(updatedMaze);
-
-        // Verificar si llegamos al final
-        if (current.x === size - 1 && current.y === size - 1) {
-          setGameWon(true);
-          break;
-        }
-
-        await new Promise(resolve => setTimeout(resolve, aiSpeed));
-      } else {
-        // Backtrack
-        stack.pop();
-        if (stack.length > 0) {
-          current = stack[stack.length - 1];
-          setAiPosition(current);
-
-          const updatedMaze = newMaze.map(row => row.map(cell => ({
-            ...cell,
-            isPath: stack.some(pos => pos.x === cell.x && pos.y === cell.y),
-            isBacktrack: !stack.some(pos => pos.x === cell.x && pos.y === cell.y) &&
-              visited.has(posKey({ x: cell.x, y: cell.y }))
-          })));
-          setMaze(updatedMaze);
-        }
-
-        await new Promise(resolve => setTimeout(resolve, aiSpeed));
-      }
-    }
-
-    setIsAIRunning(false);
-  };
-
-  const getValidNeighbors = (pos: Position, visited: Set<string>): Position[] => {
-    const neighbors: Position[] = [];
-    const { x, y } = pos;
-    const posKey = (p: Position) => `${p.x},${p.y}`;
-
-    const directions = [
-      { x, y: y - 1 }, // up
-      { x: x + 1, y }, // right
-      { x, y: y + 1 }, // down
-      { x: x - 1, y }  // left
-    ];
-
-    return directions.filter(next =>
-      !visited.has(posKey(next)) && canMove(pos, next)
-    );
   };
 
   const resetGame = () => {
