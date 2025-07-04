@@ -8,6 +8,7 @@ import AIStatus from './components/AIStatus';
 import Instructions from './components/Instructions';
 import { useMazeGenerator } from './hooks/useMazeGenerator';
 import { useAIPathfinder } from './hooks/useAIPathfinder';
+import { usePlayerMovement } from './hooks/usePlayerMovement';
 
 
 const MazeSimulator = () => {
@@ -15,9 +16,6 @@ const MazeSimulator = () => {
   const [size] = useState(20);
   const [gameMode, setGameMode] = useState<GameMode>('player');
   const [playerPosition, setPlayerPosition] = useState<Position>({ x: 0, y: 0 });
-  // const [aiPosition, setAiPosition] = useState<Position>({ x: 0, y: 0 });
-  // const [isAIRunning, setIsAIRunning] = useState(false);
-  // const [aiStack, setAiStack] = useState<Position[]>([]);
   const [gameWon, setGameWon] = useState(false);
   const [playerPaths, setPlayerPaths] = useState<Position[][]>([]);
   const [currentPlayerPath, setCurrentPlayerPath] = useState<Position[]>([]);
@@ -56,45 +54,19 @@ const MazeSimulator = () => {
     updateMaze: setMaze
   });
 
-  const handleKeyPress = useCallback((e: KeyboardEvent) => {
-    if (gameMode !== 'player' || gameWon || isAIRunning) return;
+  usePlayerMovement({
+    canMove,
+    isAIRunning,
+    gameMode,
+    gameWon,
+    playerPosition,
+    setPlayerPosition,
+    currentPlayerPath,
+    setCurrentPlayerPath,
+    size,
+    onWin: () => setGameWon(true)
+  });
 
-    const { x, y } = playerPosition;
-    let newPos: Position | null = null;
-
-    switch (e.key) {
-      case 'ArrowUp':
-        e.preventDefault();
-        newPos = { x, y: y - 1 };
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        newPos = { x, y: y + 1 };
-        break;
-      case 'ArrowLeft':
-        e.preventDefault();
-        newPos = { x: x - 1, y };
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        newPos = { x: x + 1, y };
-        break;
-    }
-
-    if (newPos && canMove(playerPosition, newPos)) {
-      setPlayerPosition(newPos);
-      setCurrentPlayerPath(prev => [...prev, newPos]);
-
-      if (newPos.x === size - 1 && newPos.y === size - 1) {
-        setGameWon(true);
-      }
-    }
-  }, [playerPosition, gameMode, gameWon, isAIRunning, canMove, size]);
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [handleKeyPress]);
 
   const savePlayerPath = () => {
     if (currentPlayerPath.length > 1) {
