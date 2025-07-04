@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Play, RotateCcw, Users, Zap, Settings } from 'lucide-react';
 import Maze from './components/Maze';
-import type { Cell, GameMode, Position } from './types';
+import type { Cell } from './types';
 import GameStatus from './components/GameStatus';
 import PlayerPaths from './components/PlayerPaths';
 import AIStatus from './components/AIStatus';
@@ -10,15 +10,23 @@ import { useMazeGenerator } from './hooks/useMazeGenerator';
 import { useAIPathfinder } from './hooks/useAIPathfinder';
 import { usePlayerMovement } from './hooks/usePlayerMovement';
 import { usePlayerPaths } from './hooks/usePlayerPaths';
+import { useGameState } from './hooks/useGameState';
 
 
 const MazeSimulator = () => {
   const [maze, setMaze] = useState<Cell[][]>([]);
   const [size] = useState(20);
-  const [gameMode, setGameMode] = useState<GameMode>('player');
-  const [playerPosition, setPlayerPosition] = useState<Position>({ x: 0, y: 0 });
-  const [gameWon, setGameWon] = useState(false);
-  const [aiSpeed, setAiSpeed] = useState(100);
+
+  const {
+    gameMode,
+    setGameMode,
+    gameWon,
+    setGameWon,
+    aiSpeed,
+    setAiSpeed,
+    playerPosition,
+    setPlayerPosition,
+  } = useGameState();
 
   const { generateMaze } = useMazeGenerator(size);
   const {
