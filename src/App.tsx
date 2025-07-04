@@ -2,11 +2,15 @@ import { useState, useEffect, useCallback } from 'react';
 import { Play, RotateCcw, Users, Zap, Settings } from 'lucide-react';
 import Maze from './components/Maze';
 import type { Cell, GameMode, Position } from './types';
+import GameStatus from './components/GameStatus';
+import PlayerPaths from './components/PlayerPaths';
+import AIStatus from './components/AIStatus';
+import Instructions from './components/Instructions';
 
 
 const MazeSimulator = () => {
   const [maze, setMaze] = useState<Cell[][]>([]);
-  const [size] = useState(15);
+  const [size] = useState(20);
   const [gameMode, setGameMode] = useState<GameMode>('player');
   const [playerPosition, setPlayerPosition] = useState<Position>({ x: 0, y: 0 });
   const [aiPosition, setAiPosition] = useState<Position>({ x: 0, y: 0 });
@@ -414,114 +418,29 @@ const MazeSimulator = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Game Status */}
-            <div className="bg-white rounded-3xl shadow-lg p-6 border border-gray-200">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Estado del Juego</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-700">Modo:</span>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${gameMode === 'player' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
-                    }`}>
-                    {gameMode === 'player' ? 'Jugador' : 'IA'}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-700">Posición:</span>
-                  <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded-lg">
-                    {gameMode === 'player'
-                      ? `(${playerPosition.x}, ${playerPosition.y})`
-                      : `(${aiPosition.x}, ${aiPosition.y})`
-                    }
-                  </span>
-                </div>
-                {gameWon && (
-                  <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-2xl text-center font-medium">
-                    🎉 ¡Laberinto Completado!
-                  </div>
-                )}
-              </div>
-            </div>
+            <GameStatus
+              gameMode={gameMode}
+              playerPosition={playerPosition}
+              aiPosition={aiPosition}
+              gameWon={gameWon}
+            />
 
-            {/* Player Paths */}
             {playerPaths.length > 0 && (
-              <div className="bg-white rounded-3xl shadow-lg p-6 border border-gray-200">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Paths del Jugador</h3>
-                <div className="space-y-3">
-                  {playerPaths.map((path, index) => (
-                    <button
-                      key={index}
-                      onClick={() => selectPath(index)}
-                      className={`w-full text-left p-4 rounded-2xl transition-all duration-200 border-2 ${selectedPath === index
-                          ? 'bg-blue-50 border-blue-300 shadow-md'
-                          : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300'
-                        }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-gray-900">Path {index + 1}</span>
-                        <span className="text-sm text-gray-500 bg-white px-2 py-1 rounded-lg">
-                          {path.length} pasos
-                        </span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <PlayerPaths
+                playerPaths={playerPaths}
+                selectedPath={selectedPath}
+                selectPath={selectPath}
+              />
             )}
 
-            {/* AI Status */}
             {gameMode === 'ai' && (
-              <div className="bg-white rounded-3xl shadow-lg p-6 border border-gray-200">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Estado de la IA</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-700">Algoritmo:</span>
-                    <span className="text-sm bg-purple-100 text-purple-800 px-3 py-1 rounded-full font-medium">
-                      Backtracking
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-700">Stack:</span>
-                    <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded-lg">
-                      {aiStack.length} posiciones
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-700">Estado:</span>
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${isAIRunning ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
-                      }`}>
-                      {isAIRunning ? 'Ejecutándose' : 'Detenida'}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <AIStatus
+                aiStack={aiStack}
+                isAIRunning={isAIRunning}
+              />
             )}
 
-            {/* Instructions */}
-            <div className="bg-white rounded-3xl shadow-lg p-6 border border-gray-200">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Instrucciones</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-red-500 rounded-full"></div>
-                  <span className="font-medium text-gray-700">Inicio: Posición (0,0)</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                  <span className="font-medium text-gray-700">Meta: Esquina inferior derecha</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
-                  <span className="font-medium text-gray-700">Jugador: Usar flechas del teclado</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
-                  <span className="font-medium text-gray-700">IA: Visualiza backtracking</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-orange-500 rounded-full"></div>
-                  <span className="font-medium text-gray-700">Paths: Guarda múltiples intentos</span>
-                </div>
-              </div>
-            </div>
+            <Instructions />
           </div>
         </div>
       </div>
