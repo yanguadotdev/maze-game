@@ -1,69 +1,18 @@
-# React + TypeScript + Vite
+# 🧩 Maze Simulator AI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a modern, interactive maze simulator built with React and TypeScript. It has been a fantastic learning journey where I practiced:
 
-Currently, two official plugins are available:
+* 🎨 **Frontend Design**: Creating a clean, responsive UI using Tailwind CSS.
+* ⚛️ **React Hooks**: Building and extracting custom hooks for different logic layers (maze generation, AI pathfinding, player movement, and path tracking).
+* 🧠 **Algorithms**: Implementing and visualizing the backtracking algorithm to generate random mazes and guide the AI through them.
+* 🕹️ **User Interaction**: Managing keyboard events, state resets, and smooth animations.
+* 🧩 **Code Architecture**: Refactoring a large monolithic component into a modular structure with reusable hooks and components.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Through this project, I learned how to:
 
-## Expanding the ESLint configuration
+✅ Keep React components clean by separating concerns.
+✅ Use state management effectively across complex interactions.
+✅ Create maintainable code that is ready to extend with new features (like other AI algorithms or additional modes).
+✅ Debug and handle asynchronous flows safely (e.g., cancelling AI animations).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Overall, this project reflects my progress as a **Frontend Developer and Designer**, combining both technical problem-solving and UI craftsmanship. 🌟
