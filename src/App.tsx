@@ -9,6 +9,7 @@ import Instructions from './components/Instructions';
 import { useMazeGenerator } from './hooks/useMazeGenerator';
 import { useAIPathfinder } from './hooks/useAIPathfinder';
 import { usePlayerMovement } from './hooks/usePlayerMovement';
+import { usePlayerPaths } from './hooks/usePlayerPaths';
 
 
 const MazeSimulator = () => {
@@ -17,9 +18,6 @@ const MazeSimulator = () => {
   const [gameMode, setGameMode] = useState<GameMode>('player');
   const [playerPosition, setPlayerPosition] = useState<Position>({ x: 0, y: 0 });
   const [gameWon, setGameWon] = useState(false);
-  const [playerPaths, setPlayerPaths] = useState<Position[][]>([]);
-  const [currentPlayerPath, setCurrentPlayerPath] = useState<Position[]>([]);
-  const [selectedPath, setSelectedPath] = useState<number | null>(null);
   const [aiSpeed, setAiSpeed] = useState(100);
 
   const { generateMaze } = useMazeGenerator(size);
@@ -39,6 +37,23 @@ const MazeSimulator = () => {
     updateMaze: setMaze
   });
 
+  const {
+    playerPaths,
+    currentPlayerPath,
+    setCurrentPlayerPath,
+    selectedPath,
+    savePlayerPath,
+    selectPath,
+    resetPaths
+  } = usePlayerPaths({
+    size,
+    setPlayerPosition,
+    setGameWon,
+    maze,
+    setMaze
+  });
+
+
   usePlayerMovement({
     isAIRunning,
     gameMode,
@@ -52,54 +67,12 @@ const MazeSimulator = () => {
     onWin: () => setGameWon(true)
   });
 
-
-  const savePlayerPath = () => {
-    if (currentPlayerPath.length > 1) {
-      const newPaths = [...playerPaths, currentPlayerPath];
-      setPlayerPaths(newPaths);
-      setCurrentPlayerPath([{ x: 0, y: 0 }]);
-      setPlayerPosition({ x: 0, y: 0 });
-
-      // Actualizar maze con números de paths
-      const newMaze = maze.map(row => row.map(cell => ({ ...cell })));
-      newPaths.forEach((path, pathIndex) => {
-        path.forEach(pos => {
-          newMaze[pos.y][pos.x].isPlayerPath = true;
-          newMaze[pos.y][pos.x].pathNumber = pathIndex + 1;
-        });
-      });
-      setMaze(newMaze);
-    }
-  };
-
-  const selectPath = (pathIndex: number) => {
-    setSelectedPath(pathIndex);
-    const path = playerPaths[pathIndex];
-
-    // Animación del path seleccionado
-    let step = 0;
-    const animateSelection = () => {
-      if (step < path.length) {
-        setPlayerPosition(path[step]);
-        step++;
-        setTimeout(animateSelection, 200);
-      } else {
-        if (path[path.length - 1].x === size - 1 && path[path.length - 1].y === size - 1) {
-          setGameWon(true);
-        }
-      }
-    };
-    animateSelection();
-  };
-
   const resetGame = () => {
     setGameMode('player');
     setPlayerPosition({ x: 0, y: 0 });
     setAiPosition({ x: 0, y: 0 });
     setGameWon(false);
-    setPlayerPaths([]);
-    setCurrentPlayerPath([{ x: 0, y: 0 }]);
-    setSelectedPath(null);
+    resetPaths();
     setIsAIRunning(false);
     setAiStack([]);
 
