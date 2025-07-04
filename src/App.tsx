@@ -26,6 +26,7 @@ const MazeSimulator = () => {
     setAiSpeed,
     playerPosition,
     setPlayerPosition,
+    resetGameState,
   } = useGameState();
 
   const { generateMaze } = useMazeGenerator(size);
@@ -34,9 +35,7 @@ const MazeSimulator = () => {
     isAIRunning,
     aiPosition,
     aiStack,
-    setAiPosition,
-    setAiStack,
-    setIsAIRunning
+    resetAI,
   } = useAIPathfinder({
     maze,
     size,
@@ -75,14 +74,10 @@ const MazeSimulator = () => {
     onWin: () => setGameWon(true)
   });
 
-  const resetGame = () => {
-    setGameMode('player');
-    setPlayerPosition({ x: 0, y: 0 });
-    setAiPosition({ x: 0, y: 0 });
-    setGameWon(false);
+  const handleResetGame = () => {
+    resetGameState();
     resetPaths();
-    setIsAIRunning(false);
-    setAiStack([]);
+    resetAI();
 
     const newMaze = maze.map(row => row.map(cell => ({
       ...cell,
@@ -96,7 +91,6 @@ const MazeSimulator = () => {
   };
 
   const handleGenerateNewMaze = () => {
-    resetGame();
     const newMaze = generateMaze();
     setMaze(newMaze);
   };
@@ -133,7 +127,7 @@ const MazeSimulator = () => {
             </button>
 
             <button
-              onClick={resetGame}
+              onClick={handleResetGame}
               className="flex items-center gap-3 px-6 py-4 bg-gray-500 text-white rounded-2xl hover:bg-gray-600 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <RotateCcw size={20} />

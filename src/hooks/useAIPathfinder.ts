@@ -106,6 +106,12 @@ export function useAIPathfinder({
     setIsAIRunning(false);
   };
 
+  const resetAI = () => {
+    setAiPosition({ x: 0, y: 0 });
+    setAiStack([]);
+    setIsAIRunning(false);
+  };
+
   return {
     runAI,
     isAIRunning,
@@ -113,6 +119,7 @@ export function useAIPathfinder({
     aiStack,
     setAiPosition,
     setAiStack,
-    setIsAIRunning
+    setIsAIRunning,
+    resetAI
   };
 }

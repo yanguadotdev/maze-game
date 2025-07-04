@@ -6,9 +6,13 @@ export function useGameState() {
     const [gameWon, setGameWon] = useState(false);
     const [aiSpeed, setAiSpeed] = useState(100);
     const [playerPosition, setPlayerPosition] = useState<Position>({ x: 0, y: 0 });
-    const [aiPosition, setAiPosition] = useState<Position>({ x: 0, y: 0 });
-    const [aiStack, setAiStack] = useState<Position[]>([]);
     const [isAIRunning, setIsAIRunning] = useState(false);
+
+    const resetGameState = () => {
+        setGameMode('player');
+        setPlayerPosition({ x: 0, y: 0 });
+        setGameWon(false);
+    };
 
     return {
         gameMode,
@@ -19,11 +23,8 @@ export function useGameState() {
         setAiSpeed,
         playerPosition,
         setPlayerPosition,
-        aiPosition,
-        setAiPosition,
-        aiStack,
-        setAiStack,
         isAIRunning,
-        setIsAIRunning
+        setIsAIRunning,
+        resetGameState
     };
 }
