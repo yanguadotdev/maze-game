@@ -1,5 +1,7 @@
 # 🧩 Maze Simulator AI
 
+![Maze Simulator Screenshot](public/og.jpg)
+
 This project is a modern, interactive maze simulator built with React and TypeScript. It has been a fantastic learning journey where I practiced:
 
 * 🎨 **Frontend Design**: Creating a clean, responsive UI using Tailwind CSS.
