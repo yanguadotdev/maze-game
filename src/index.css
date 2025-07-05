@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
 
-
+@theme {
+  --breakpoint-xxs: 24rem;
+  --breakpoint-xs: 32rem;
+}
 
 body {
   font-family: 'Work Sans', sans-serif;

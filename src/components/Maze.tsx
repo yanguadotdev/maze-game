@@ -36,7 +36,7 @@ export default function Maze({
     return (
         <div className="lg:col-span-3">
             <div className="bg-white rounded-3xl shadow-lg p-8 border border-gray-200">
-                <div className="grid gap-0 mx-auto" style={{
+                <div className="grid gap-0 mx-auto w-full" style={{
                     gridTemplateColumns: `repeat(${size}, 1fr)`,
                     maxWidth: '800px'
                 }}>

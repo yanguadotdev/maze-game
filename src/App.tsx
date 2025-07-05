@@ -15,7 +15,6 @@ import Controls from './components/Controls'
 
 const MazeSimulator = () => {
   const [maze, setMaze] = useState<Cell[][]>([])
-  const [size] = useState(20)
 
   const {
     gameMode,
@@ -27,6 +26,7 @@ const MazeSimulator = () => {
     playerPosition,
     setPlayerPosition,
     resetGameState,
+    size
   } = useGameState()
 
   const { generateMaze } = useMazeGenerator(size)
